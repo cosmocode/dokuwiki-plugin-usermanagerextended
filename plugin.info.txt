@@ -1,7 +1,7 @@
 base   usermanagerextended
 author Anna Dabrowska
 email  dokuwiki@cosmocode.de
-date   2020-10-12
+date   2020-10-13
 name   usermanagerextended plugin
 desc   Let managers manage users (with restrictions)
 url    https://www.dokuwiki.org/plugin:usermanagerextended
