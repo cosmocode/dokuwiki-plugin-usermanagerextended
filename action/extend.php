@@ -7,7 +7,7 @@ class action_plugin_usermanagerextended_extend extends DokuWiki_Action_Plugin
 {
 
     /**
-     * @param Doku_Event_Handler $controller
+     * @param \Doku_Event_Handler $controller
      */
     public function register(\Doku_Event_Handler $controller)
     {
@@ -18,7 +18,7 @@ class action_plugin_usermanagerextended_extend extends DokuWiki_Action_Plugin
     /**
      * Grant managers access to user manager
      *
-     * @param Doku_Event $event
+     * @param \Doku_Event $event
      */
     public function handleAccess(\Doku_Event $event)
     {
@@ -32,7 +32,7 @@ class action_plugin_usermanagerextended_extend extends DokuWiki_Action_Plugin
      * - do not modify superusers
      * - do not create superusers or managers (by adding users or groups)
      *
-     * @param Doku_Event $event
+     * @param \Doku_Event $event
      * @return bool
      */
     public function handlePermissions(\Doku_Event $event)
@@ -41,8 +41,30 @@ class action_plugin_usermanagerextended_extend extends DokuWiki_Action_Plugin
         if (auth_isadmin()) return true;
         if (!auth_ismanager()) return $this->deny($event);
 
-        global $auth, $conf;
         $modUser = $event->data['params'][0];
+
+        // more checks
+        if (is_array($modUser)) {
+            foreach ($modUser as $user) {
+                $this->checkModUser($user, $event);
+            }
+        } else {
+            $this->checkModUser($modUser, $event);
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if modification of given user is allowed
+     *
+     * @param string $modUser
+     * @param \Doku_Event $event
+     * @return bool
+     */
+    protected function checkModUser($modUser, \Doku_Event $event)
+    {
+        global $auth, $conf;
 
         // rule: don't touch admins
         // auth_isadmin() needs to receive groups or it will match against the groups of REMOTE_USER!
@@ -76,6 +98,7 @@ class action_plugin_usermanagerextended_extend extends DokuWiki_Action_Plugin
     /**
      * Wrap up modification denial
      *
+     * @param \Doku_Event $event
      * @return false
      */
     protected function deny(\Doku_Event $event)
