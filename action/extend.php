@@ -38,6 +38,8 @@ class action_plugin_usermanagerextended_extend extends DokuWiki_Action_Plugin
     public function handlePermissions(\Doku_Event $event)
     {
         // preliminary checks
+        global $INPUT;
+        if ($INPUT->str('page') !== 'usermanager') return true;
         if (auth_isadmin()) return true;
         if (!auth_ismanager()) return $this->deny($event);
 
